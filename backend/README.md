@@ -2,7 +2,7 @@
 
 Django REST API for managing employees and departments, backed by PostgreSQL.
 
-**Stack:** Django 5.2, Django REST Framework, django-filter, PostgreSQL (psycopg 3), DRF token authentication.
+**Stack:** Django 5.2, Django REST Framework, django-filter, PostgreSQL , DRF token authentication.
 
 ## Project setup
 
@@ -14,8 +14,6 @@ pip install -r requirements.txt
 ```
 
 ## Environment setup
-
-Copy `.env.example` to `.env` and fill in your values:
 
 | Variable | Default | Description |
 |---|---|---|
@@ -91,9 +89,9 @@ The API uses DRF token authentication.
 
 | Role | Read (GET) | Create / Update / Delete |
 |---|---|---|
-| Not logged in | ✗ `401` | ✗ `401` |
-| Normal user | ✓ | ✗ `403` |
-| Admin (`is_staff`) | ✓ | ✓ |
+| Not logged in |  `401` |  `401` |
+| Normal user | `200` |  `403` |
+| Admin (`is_staff`) | `200` | `2xx` |
 
 These rules live in `employees/permissions.py` (`IsAdminOrReadOnly`) and apply to every endpoint by default.
 
@@ -125,119 +123,6 @@ These rules live in `employees/permissions.py` (`IsAdminOrReadOnly`) and apply t
 | `page` | `?page=2` | Page number (10 per page) |
 
 Parameters can be combined: `/api/employees/?department=IT&status=active&search=dev&ordering=-joining_date`
-
-## Example requests and responses
-
-### Login
-
-```bash
-curl -X POST http://localhost:8000/api/auth/login/ \
-  -H "Content-Type: application/json" \
-  -d '{"username": "admin", "password": "admin123"}'
-```
-
-```json
-{ "token": "9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b", "username": "admin", "is_admin": true }
-```
-
-Bad credentials return `400`: `{ "detail": "Invalid username or password." }`
-
-### List employees
-
-```bash
-curl "http://localhost:8000/api/employees/?search=john" \
-  -H "Authorization: Token <token>"
-```
-
-```json
-{
-  "count": 1,
-  "next": null,
-  "previous": null,
-  "results": [
-    {
-      "id": 1,
-      "name": "John Smith",
-      "email": "john@example.com",
-      "phone": "9876543210",
-      "department": 1,
-      "department_name": "IT",
-      "designation": "Developer",
-      "joining_date": "2023-01-10",
-      "status": "active",
-      "created_at": "2026-10-08T09:34:42.587178Z",
-      "updated_at": "2026-10-08T09:34:42.587178Z"
-    }
-  ]
-}
-```
-
-### Create employee
-
-```bash
-curl -X POST http://localhost:8000/api/employees/ \
-  -H "Authorization: Token <token>" \
-  -H "Content-Type: application/json" \
-  -d '{"name": "Asha Menon", "email": "asha@example.com", "phone": "9876500001",
-       "department": 1, "designation": "Developer", "joining_date": "2024-06-01", "status": "active"}'
-```
-
-`201 Created` returns the new employee in the same shape as a list item.
-
-### Partial update
-
-```bash
-curl -X PATCH http://localhost:8000/api/employees/1/ \
-  -H "Authorization: Token <token>" \
-  -H "Content-Type: application/json" \
-  -d '{"status": "inactive"}'
-```
-
-`200 OK` returns the updated employee.
-
-### Delete employee
-
-```bash
-curl -X DELETE http://localhost:8000/api/employees/1/ -H "Authorization: Token <token>"
-```
-
-`204 No Content`
-
-### Invalid data (`400 Bad Request`)
-
-```json
-{
-  "name": ["This field may not be blank."],
-  "email": ["Enter a valid email address."],
-  "phone": ["Phone must be 10-14 digits."],
-  "department": ["This field is required."],
-  "joining_date": ["Joining date cannot be in the future."],
-  "status": ["\"unknown\" is not a valid choice."]
-}
-```
-
-### No token (`401 Unauthorized`)
-
-```json
-{ "detail": "Authentication credentials were not provided." }
-```
-
-### Normal user writing (`403 Forbidden`)
-
-```json
-{ "detail": "You do not have permission to perform this action." }
-```
-
-### List departments
-
-```json
-[
-  { "id": 3, "name": "Finance", "description": "Accounts and payroll" },
-  { "id": 2, "name": "HR", "description": "People and hiring" },
-  { "id": 1, "name": "IT", "description": "Software and infrastructure" },
-  { "id": 4, "name": "Sales", "description": "Customer acquisition" }
-]
-```
 
 ## Postman collection
 
