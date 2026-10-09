@@ -3,6 +3,7 @@ import { Navigate, useNavigate } from 'react-router-dom'
 import Button from '../components/Button'
 import ErrorMessage from '../components/ErrorMessage'
 import Field from '../components/Field'
+import Icon from '../components/Icon'
 import { useAuth } from '../context/AuthContext'
 
 export default function Login() {
@@ -31,19 +32,33 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <form onSubmit={handleSubmit} className="bg-white border border-slate-200 rounded-lg p-6 w-full max-w-sm space-y-4">
-        <div>
-          <h1 className="text-xl font-semibold">Employee Management</h1>
-          <p className="text-sm text-slate-500">Sign in to continue</p>
+    <div className="grid min-h-screen md:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]">
+      <aside className="hidden flex-col justify-between bg-slate-950 p-10 text-white md:flex lg:p-16">
+        <div className="flex items-center gap-3"><span className="flex size-10 items-center justify-center rounded-lg bg-emerald-500 text-slate-950"><Icon name="people" className="size-5" /></span><span className="text-xl font-semibold tracking-tight">EMS</span></div>
+        <div className="py-20">
+          <h1 className="text-4xl font-semibold leading-[1.15] tracking-tight lg:text-5xl">Employee<br />Management</h1>
+          <div className="mt-10 h-1 w-12 bg-emerald-500" />
         </div>
-        <ErrorMessage message={error} />
-        <Field label="Username" name="username" value={form.username} onChange={handleChange} autoFocus />
-        <Field label="Password" name="password" type="password" value={form.password} onChange={handleChange} />
-        <Button type="submit" disabled={loading} className="w-full py-2">
-          {loading ? 'Signing in...' : 'Sign in'}
-        </Button>
-      </form>
+        <p className="text-xs text-slate-500"></p>
+      </aside>
+      <main className="flex items-center justify-center px-6 py-12 sm:px-10">
+        <div className="w-full max-w-sm">
+          <div className="mb-12 flex items-center gap-2 text-sm font-semibold md:hidden"><span className="flex size-9 items-center justify-center rounded-lg bg-slate-950 text-white"><Icon name="people" /></span>Employee Management</div>
+          <div className="mb-8">
+            <p className="mb-2 text-sm text-stone-500">Welcome back</p>
+            <h2 className="text-3xl font-semibold tracking-tight">Sign in</h2>
+          </div>
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <ErrorMessage message={error} />
+            <Field label="Username" name="username" value={form.username} onChange={handleChange} autoComplete="username" autoFocus />
+            <Field label="Password" name="password" type="password" value={form.password} onChange={handleChange} autoComplete="current-password" />
+            <Button type="submit" disabled={loading} className="mt-2 w-full">
+              {loading ? 'Signing in...' : 'Sign in'}<Icon name="arrow" />
+            </Button>
+          </form>
+          <p className="mt-8 border-t border-stone-200 pt-5 text-xs leading-6 text-stone-500">Access is managed by your administrator.</p>
+        </div>
+      </main>
     </div>
   )
 }

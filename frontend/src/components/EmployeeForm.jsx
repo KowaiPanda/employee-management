@@ -63,37 +63,47 @@ export default function EmployeeForm({ initial, submitLabel, onSubmit, onCancel 
         Object.entries(err.fields || {}).map(([key, msgs]) => [key, [].concat(msgs)[0]]),
       )
       setErrors(fields)
-      setError(fields.detail || 'Please fix the errors below.')
+      setError(fields.detail || (Object.keys(fields).length ? 'Please fix the errors below.' : err.message))
     } finally {
       setSaving(false)
     }
   }
 
-  const props = (name) => ({ name, value: form[name], onChange: handleChange, error: errors[name] })
+  const props = (name) => ({ name, value: form[name], onChange: handleChange, error: errors[name], required: true })
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="bg-white border border-slate-200 rounded-lg p-5">
-      <ErrorMessage message={error || depts.error} />
-      <div className="grid sm:grid-cols-2 gap-4">
-        <Field label="Name" {...props('name')} />
-        <Field label="Email" type="email" {...props('email')} />
-        <Field label="Phone" {...props('phone')} />
-        <Field label="Department" as="select" {...props('department')}>
-          <option value="">{depts.loading ? 'Loading...' : 'Select department'}</option>
-          {depts.data?.map((d) => (
-            <option key={d.id} value={d.id}>{d.name}</option>
-          ))}
-        </Field>
-        <Field label="Designation" {...props('designation')} />
-        <Field label="Joining Date" type="date" max={today()} {...props('joining_date')} />
-        <Field label="Status" as="select" {...props('status')}>
-          <option value="active">Active</option>
-          <option value="inactive">Inactive</option>
-        </Field>
+    <form onSubmit={handleSubmit} noValidate className="panel overflow-hidden">
+      {(error || depts.error) && <div className="px-6"><ErrorMessage message={error || depts.error} /></div>}
+      <div className="divide-y divide-stone-200">
+        <section className="grid gap-6 px-6 py-7 sm:p-8 lg:grid-cols-[180px_minmax(0,1fr)]" aria-labelledby="personal-heading">
+          <div><h2 id="personal-heading" className="text-sm font-semibold">Personal details</h2><p className="mt-2 text-xs leading-6 text-stone-500">Name and contact information for this employee.</p></div>
+          <div className="grid gap-5 sm:grid-cols-2">
+            <Field label="Full name" className="sm:col-span-2" autoComplete="name" maxLength={100} {...props('name')} />
+            <Field label="Email address" type="email" autoComplete="email" maxLength={254} {...props('email')} />
+            <Field label="Phone number" type="tel" autoComplete="tel" maxLength={15} hint="10–14 digits; country code is optional." {...props('phone')} />
+          </div>
+        </section>
+        <section className="grid gap-6 px-6 py-7 sm:p-8 lg:grid-cols-[180px_minmax(0,1fr)]" aria-labelledby="employment-heading">
+          <div><h2 id="employment-heading" className="text-sm font-semibold">Employment</h2><p className="mt-2 text-xs leading-6 text-stone-500">Their role, department and current status.</p></div>
+          <div className="grid gap-5 sm:grid-cols-2">
+            <Field label="Department" as="select" disabled={depts.loading} {...props('department')}>
+              <option value="">{depts.loading ? 'Loading...' : 'Select department'}</option>
+              {depts.data?.map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}
+            </Field>
+            <Field label="Designation" autoComplete="organization-title" maxLength={100} {...props('designation')} />
+            <Field label="Joining date" type="date" max={today()} {...props('joining_date')} />
+            <Field label="Status" as="select" {...props('status')}>
+              <option value="active">Active</option><option value="inactive">Inactive</option>
+            </Field>
+          </div>
+        </section>
       </div>
-      <div className="flex justify-end gap-2 mt-6">
-        <Button type="button" variant="secondary" onClick={onCancel}>Cancel</Button>
-        <Button type="submit" disabled={saving}>{saving ? 'Saving...' : submitLabel}</Button>
+      <div className="flex flex-wrap items-center justify-between gap-4 border-t border-stone-200 bg-stone-50 px-6 py-5 sm:px-8">
+        <p className="text-xs text-stone-500">All fields are required.</p>
+        <div className="ml-auto flex gap-2">
+          <Button type="button" variant="secondary" onClick={onCancel} disabled={saving}>Cancel</Button>
+          <Button type="submit" disabled={saving || depts.loading}>{saving ? 'Saving...' : submitLabel}</Button>
+        </div>
       </div>
     </form>
   )

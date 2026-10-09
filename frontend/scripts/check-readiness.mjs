@@ -46,8 +46,8 @@ try {
     check(`Anonymous protected route withholds content: ${route}`, render(route) === '')
   }
   check('Admin dashboard renders', render('/', admin).includes('Dashboard'))
-  check('Admin employee directory renders creation action', render('/employees', admin).includes('+ Add Employee'))
-  check('Read-only employee directory hides creation action', !render('/employees', user).includes('+ Add Employee'))
+  check('Admin employee directory renders creation action', render('/employees', admin).includes('Add Employee'))
+  check('Read-only employee directory hides creation action', !render('/employees', user).includes('Add Employee'))
   const form = render('/employees/new', admin)
   check('Admin creation form renders all required inputs', ['name', 'email', 'phone', 'department', 'designation', 'joining_date', 'status']
     .every((field) => form.includes(`name="${field}"`)))

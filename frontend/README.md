@@ -109,18 +109,3 @@ Pages call named functions instead of building URLs themselves:
 | `getDepartments()` | `GET /api/departments/` |
 
 **Loading and errors:** each page reads `loading` and `error` from `useApi`, shows `<Loader />` while waiting, and shows `<ErrorMessage />` (with a Retry button where useful) on failure. Buttons show "Saving..." or "Deleting..." and are disabled while a request is running.
-
-## Concepts covered
-
-| Concept | Where |
-|---|---|
-| Components and props | `components/*`, e.g. `StatCard`, `Field`, `EmployeeForm` |
-| State | `useState` in every page and form |
-| Hooks | `useState`, `useEffect`, `useContext`, custom `useApi` and `useDebounce` |
-| Forms and validation | `EmployeeForm`, `Login` |
-| Conditional rendering | Admin-only buttons, loading/error/empty states, `ConfirmDialog` |
-| Lists | Employee table rows, department options |
-| Routing | `App.jsx`, `ProtectedRoute`, `useParams`, `useNavigate` |
-| API integration and CRUD | `api.js`, used by every page |
-| Loading states and error handling | `useApi`, `Loader`, `ErrorMessage` |
-| Reusable components | `Button`, `Field`, `ConfirmDialog`, `EmployeeForm` |
